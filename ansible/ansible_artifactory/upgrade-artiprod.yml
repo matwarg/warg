@@ -1,0 +1,37 @@
+---
+
+- name: Upgrade Artifactory from 6.12.2 to 7.11.5
+  gather_facts: yes
+  hosts: artiprod
+  remote_user: your_user
+
+  vars:
+  environment:
+    ARTIFACTORY_HOME: /app/artifactory
+    JFROG_HOME: /app/jfrog
+    JF_PRODUCT_HOME: /app/jfrog/artifactory
+
+
+  tasks:
+    - name: Stop the current server.
+      command: /app/artifactory/bin/artifactoryctl stop
+
+    - name: Download upgarde script on /your_user
+      get_url:
+        url: 
+        dest: /home/your_user/your_user/scripts
+        mode: 0755
+
+    - name: Run upgrade script.
+      shell: "/bin/bash /home/your_user/your_user/scripts/upgrade.sh"
+      register: shell_result
+
+    - name: Run migrate script.
+      shell: "/bin/bash /app/jfrog/artifactory/app/bin/migrate.sh"
+      register: shell_result
+
+    - name: Start the new server.
+      command: /app/jfrog/artifactory/app/bin/artifactoryctl start
+ 
+    - debug:
+        var: shell_result.stdout_lines

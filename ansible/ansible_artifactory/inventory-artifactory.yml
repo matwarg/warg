@@ -1,0 +1,8 @@
+---
+
+all:
+  hosts: 
+    artitest:    
+      ansible_host: your_test.env.host
+    artiprod:    
+      ansible_host: your_prod.env.host
